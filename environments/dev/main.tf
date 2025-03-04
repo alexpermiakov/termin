@@ -20,11 +20,10 @@ provider "aws" {
   profile = "default"
 }
 
-module "iam" {
-  source = "../../modules/iam"
-}
+# module "iam" {
+#   source = "../../modules/iam"
+# }
 
-module "lambda" {
-  source        = "../../modules/lambda"
-  cicd_role_arn = module.iam.cicd_role_arn
+module "scraping" {
+  source = "../../modules/scraping"
 }
