@@ -20,9 +20,9 @@ provider "aws" {
   profile = "default"
 }
 
-# module "iam" {
-#   source = "../../modules/iam"
-# }
+module "notification" {
+  source = "../../modules/notification"
+}
 
 module "scraping" {
   source = "../../modules/scraping"
