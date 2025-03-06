@@ -1,14 +1,14 @@
-resource "aws_lambda_function" "termin_scraper_lambda" {
-  function_name    = "TerminScraper"
-  role             = aws_iam_role.cicd_role.arn
+resource "aws_lambda_function" "scraper" {
+  function_name    = "scraper"
+  role             = aws_iam_role.scraper_role.arn
   runtime          = "nodejs22.x"
   handler          = "index.handler"
   filename         = "${path.module}/files/scraper.zip"
   source_code_hash = filebase64sha256("${path.module}/files/scraper.zip")
 }
 
-resource "aws_iam_role" "cicd_role" {
-  name               = "cicd_role"
+resource "aws_iam_role" "scraper_role" {
+  name               = "scraper_role"
   assume_role_policy = <<EOF
   {
     "Version": "2012-10-17",
@@ -25,9 +25,9 @@ resource "aws_iam_role" "cicd_role" {
   EOF
 }
 
-resource "aws_iam_role_policy" "cicd_policy" {
-  name   = "cicd_policy"
-  role   = aws_iam_role.cicd_role.id
+resource "aws_iam_role_policy" "scraper_policy" {
+  name   = "scraper_policy"
+  role   = aws_iam_role.scraper_role.id
   policy = <<EOF
   {
     "Version": "2012-10-17",

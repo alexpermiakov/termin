@@ -1,10 +1,10 @@
 resource "aws_cloudwatch_log_metric_filter" "termin_found_filter" {
-  name           = "TerminFoundFilter"
+  name           = "termin_found_filter"
   pattern        = "Termin found."
-  log_group_name = "/aws/lambda/TerminScraper"
+  log_group_name = "/aws/lambda/scraper"
 
   metric_transformation {
-    name      = "TerminFoundMetric"
+    name      = "termin_found_metric"
     namespace = "TerminScraper"
     value     = 1
   }
