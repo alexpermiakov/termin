@@ -4,7 +4,7 @@ resource "aws_cloudwatch_metric_alarm" "termin_found_alarm" {
   evaluation_periods  = 1
   metric_name         = "termin_found_metric"
   namespace           = "termin_scraper"
-  period              = 86400
+  period              = var.period
   statistic           = "Sum"
   threshold           = 1
 

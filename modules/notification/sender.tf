@@ -19,7 +19,7 @@ resource "aws_lambda_function" "sms_sender" {
   filename         = "${path.module}/files/sms_sender.zip"
   function_name    = "sms_sender"
   role             = aws_iam_role.sms_sender_role.arn
-  runtime          = "nodejs22.x"
+  runtime          = var.runtime
   handler          = "index.handler"
   source_code_hash = filebase64sha256("${path.module}/files/sms_sender.zip")
 }

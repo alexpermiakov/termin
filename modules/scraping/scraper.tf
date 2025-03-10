@@ -1,7 +1,7 @@
 resource "aws_lambda_function" "scraper" {
   function_name    = "scraper"
   role             = aws_iam_role.scraper_role.arn
-  runtime          = "nodejs22.x"
+  runtime          = var.runtime
   handler          = "index.handler"
   filename         = "${path.module}/files/scraper.zip"
   source_code_hash = filebase64sha256("${path.module}/files/scraper.zip")
