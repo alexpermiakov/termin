@@ -20,6 +20,10 @@ provider "aws" {
   profile = "default"
 }
 
+module "cluster" {
+  source = "../../modules/cluster"
+}
+
 module "notification" {
   source  = "../../modules/notification"
   runtime = "nodejs22.x"

@@ -5,8 +5,13 @@ data "aws_availability_zones" "available" {
   }
 }
 
+output "azs" {
+  value = data.aws_availability_zones.available.names
+}
+
 locals {
   cluster_name = "termin-eks-${random_string.suffix.result}"
+  zones_count  = length(data.aws_availability_zones.available.names)
 }
 
 resource "random_string" "suffix" {
@@ -20,8 +25,8 @@ module "vpc" {
 
   name = "k8s-vpc"
 
-  cidr = "10.0.0.0/16"
-  azs  = slice(data.aws_availability_zones.available.names, 0, 3)
+  cidr = "10.0.0.0/20"
+  azs  = slice(data.aws_availability_zones.available.names, 0, min(3, local.zones_count))
 
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
@@ -37,6 +42,15 @@ module "vpc" {
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
   }
+
+  tags = {
+    Environment = "dev"
+    Terraform   = "true"
+  }
+}
+
+output "azs_names" {
+  value = module.vpc.azs
 }
 
 module "eks" {
@@ -81,14 +95,4 @@ module "irsa-ebs-csi" {
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
-}
-
-data "local_file" "kubeconfig" {
-  depends_on = [module.eks]
-  filename   = "${path.module}/kubeconfig_${local.cluster_name}"
-  content    = module.eks.kubeconfig
-}
-
-output "name" {
-  value = data.local_file.kubeconfig.content
 }
