@@ -1,12 +1,12 @@
-output "notification" {
-  value = module.notification
-}
+# output "notification" {
+#   value = module.notification
+# }
 
-output "scraping" {
-  value = module.scraping
+# output "scraping" {
+#   value = module.scraping
 
-}
+# }
 
-output "networking" {
-  value = module.networking
-}
+# output "networking" {
+#   value = module.networking
+# }

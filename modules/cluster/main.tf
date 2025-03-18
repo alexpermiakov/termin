@@ -5,8 +5,9 @@ data "aws_availability_zones" "available" {
   }
 }
 
-output "azs" {
-  value = data.aws_availability_zones.available.names
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
 }
 
 locals {
@@ -14,10 +15,6 @@ locals {
   zones_count  = length(data.aws_availability_zones.available.names)
 }
 
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -49,8 +46,36 @@ module "vpc" {
   }
 }
 
-output "azs_names" {
-  value = module.vpc.azs
+resource "aws_iam_role" "eks_worker_node_role" {
+  name = "${local.cluster_name}-worker-node-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
+  role       = aws_iam_role.eks_worker_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
+  role       = aws_iam_role.eks_worker_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+}
+
+resource "aws_iam_role_policy_attachment" "ec2_container_registry_read_only" {
+  role       = aws_iam_role.eks_worker_node_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
 module "eks" {
@@ -66,14 +91,22 @@ module "eks" {
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
 
-  cluster_compute_config = {
-    enabled    = true
-    node_pools = ["general-purpose"]
-  }
-
   cluster_addons = {
     aws-ebs-csi-driver = {
       service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
+    }
+  }
+
+  eks_managed_node_groups = {
+    general-purpose = {
+      ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = ["t3.medium"]
+
+      min_size     = 1
+      max_size     = 3
+      desired_size = 2
+
+      iam_role_arn = aws_iam_role.eks_worker_node_role.arn
     }
   }
 
@@ -83,16 +116,12 @@ module "eks" {
   }
 }
 
-data "aws_iam_policy" "ebs_csi_policy" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-}
-
 module "irsa-ebs-csi" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "5.39.0"
   create_role                   = true
   role_name                     = "AmazonEKSTFEBSCSIRole-${module.eks.cluster_name}"
   provider_url                  = module.eks.oidc_provider
-  role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+  role_policy_arns              = ["arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller"]
 }
