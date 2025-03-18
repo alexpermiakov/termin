@@ -36,12 +36,6 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Plan
-        run: terraform plan
-
       - name: Check tag
         id: check-tag
         run: |
@@ -53,10 +47,24 @@ jobs:
             echo "environment=unknown" >> $GITHUB_OUTPUT
           fi
 
+      - name: Terraform Init and Plan Development
+        if: steps.check-tag.outputs.environment == 'development'
+        working-directory: infrastructure/environments/dev
+        run: |
+          terraform init
+          terraform plan
+
       - name: Terraform Apply Development
         if: steps.check-tag.outputs.environment == 'development'
         working-directory: infrastructure/environments/dev
         run: terraform apply -auto-approve
+
+      - name: Terraform Init and Plan Production
+        if: steps.check-tag.outputs.environment == 'production'
+        working-directory: infrastructure/environments/prod
+        run: |
+          terraform init
+          terraform plan
 
       - name: Terraform Apply Production
         if: steps.check-tag.outputs.environment == 'production'
