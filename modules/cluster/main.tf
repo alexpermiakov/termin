@@ -116,6 +116,43 @@ module "eks" {
   }
 }
 
+# Role authentication:
+resource "aws_eks_access_entry" "access_entry" {
+  cluster_name      = module.eks.cluster_name
+  principal_arn     = "arn:aws:iam::746669194690:role/OrganizationAccountAccessRole"
+  type              = "STANDARD"
+  kubernetes_groups = ["eks-admins"]
+}
+
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
+}
+
+data "aws_eks_cluster_auth" "cluster" {
+  name = module.eks.cluster_name
+}
+
+# Role authorization:
+resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
+  metadata {
+    name = "eks-admins-cluster-admin-binding"
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+
+  subject {
+    kind      = "Group"
+    name      = "eks-admins"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
 module "irsa-ebs-csi" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "5.39.0"
