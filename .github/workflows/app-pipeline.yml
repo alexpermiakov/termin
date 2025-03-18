@@ -1,4 +1,4 @@
-name: "Terraform"
+name: App Pipeline
 
 on:
   push:
@@ -11,5 +11,5 @@ on:
 
 jobs:
   terraform:
-    name: "Terraform"
+    name: Deploy Application
     runs-on: ubuntu-latest
