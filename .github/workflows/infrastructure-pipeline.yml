@@ -120,7 +120,7 @@ jobs:
             -backend-config="bucket=${{ secrets.s3_bucket_name }}" \
             -backend-config="key=state.tfstate" \
             -backend-config="encrypt=true" \
-            -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
+            -backend-config="use_lockfile=${{ secrets.dynamodb_table }}"
           terraform plan
 
       - name: Terraform Apply Development
@@ -133,13 +133,14 @@ jobs:
         working-directory: infrastructure/environments/prod
         env:
           TF_VAR_environment: "prod"
+          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           terraform init \
             -backend-config="region=${{secrets.AWS_DEFAULT_REGION}}" \
             -backend-config="bucket=${{ secrets.s3_bucket_name }}" \
             -backend-config="key=state.tfstate" \
             -backend-config="encrypt=true" \
-            -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
+            -backend-config="use_lockfile=${{ secrets.dynamodb_table }}"
           terraform plan
 
       - name: Terraform Apply Production
