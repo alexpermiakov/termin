@@ -15,7 +15,8 @@ provider "aws" {
 }
 
 module "cluster" {
-  source = "../../modules/cluster"
+  source      = "../../modules/cluster"
+  environment = var.environment
 }
 
 # module "notification" {
