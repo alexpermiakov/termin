@@ -120,7 +120,7 @@ jobs:
             -backend-config="bucket=${{ secrets.s3_bucket_name }}" \
             -backend-config="key=state.tfstate" \
             -backend-config="encrypt=true" \
-            -backend-config="use_lockfile=${{ secrets.dynamodb_table }}"
+            -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
           terraform plan
 
       - name: Terraform Apply Development
@@ -140,7 +140,7 @@ jobs:
             -backend-config="bucket=${{ secrets.s3_bucket_name }}" \
             -backend-config="key=state.tfstate" \
             -backend-config="encrypt=true" \
-            -backend-config="use_lockfile=${{ secrets.dynamodb_table }}"
+            -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
           terraform plan
 
       - name: Terraform Apply Production
