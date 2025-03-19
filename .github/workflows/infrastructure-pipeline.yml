@@ -2,9 +2,6 @@ name: Infrastructure Pipeline
 
 on:
   push:
-    paths:
-      - 'infrastructure/environments/**'
-      - 'infrastructure/modules/**'
     branches:
       - main
   release:
