@@ -8,12 +8,12 @@ terraform {
 }
 
 provider "aws" {
-  region  = "eu-central-1"
+  region  = var.aws_region
   profile = "default"
 }
 
 resource "aws_s3_bucket" "tf_state" {
-  bucket = "terraform-state-bucket-ap1988"
+  bucket = var.s3_bucket_name
 
   lifecycle {
     prevent_destroy = true
@@ -21,12 +21,12 @@ resource "aws_s3_bucket" "tf_state" {
 
   tags = {
     Name        = "Terraform State Bucket"
-    Environment = "Dev"
+    Environment = var.environment
   }
 }
 
 resource "aws_dynamodb_table" "terraform_locks" {
-  name         = "terraform_locks"
+  name         = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
@@ -37,7 +37,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
 
   tags = {
     Name        = "Terraform Lock Table"
-    Environment = "Dev"
+    Environment = var.environment
   }
 
 }

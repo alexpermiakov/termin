@@ -50,8 +50,17 @@ jobs:
       - name: Terraform Init and Plan Development
         if: steps.check-tag.outputs.environment == 'development'
         working-directory: infrastructure/environments/dev
+        env:
+          TF_VAR_environment: "dev"
+          TF_VAR_s3_bucket_name: ${{ secrets.s3_bucket_name }}
+          TF_VAR_dynamodb_table_name: "terraform_locks_dev"
         run: |
-          terraform init
+          terraform init \
+            -backend-config="region=${TF_VAR_region}" \
+            -backend-config="bucket=${TF_VAR_s3_bucket_name}" \
+            -backend-config="key=state.tfstate" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}
           terraform plan
 
       - name: Terraform Apply Development
@@ -62,8 +71,17 @@ jobs:
       - name: Terraform Init and Plan Production
         if: steps.check-tag.outputs.environment == 'production'
         working-directory: infrastructure/environments/prod
+        env:
+          TF_VAR_environment: "prod"
+          TF_VAR_s3_bucket_name: ${{ secrets.s3_bucket_name }}
+          TF_VAR_dynamodb_table_name: "terraform_locks_prod"
         run: |
-          terraform init
+          terraform init \
+            -backend-config="region=${TF_VAR_region}" \
+            -backend-config="bucket=${TF_VAR_s3_bucket_name}" \
+            -backend-config="key=state.tfstate" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}
           terraform plan
 
       - name: Terraform Apply Production
