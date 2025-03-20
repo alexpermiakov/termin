@@ -20,6 +20,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      TF_VAR_environment: "dev"
+      TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -45,14 +47,13 @@ jobs:
             -backend-config="key=state.tfstate" \
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
-          terraform plan
-        env:
-          TF_VAR_environment: "dev"
-          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
+          terraform plan  \
+            -var="environment=dev" \
+            -var="region=${{ secrets.AWS_DEFAULT_REGION }}"
 
       - name: Terraform Apply Development
         working-directory: infrastructure/environments/dev
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve 
 
   terraform-environments-prod:
     name: Terraform Environments
@@ -63,6 +64,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      TF_VAR_environment: "prod"
+      TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -89,9 +92,6 @@ jobs:
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
           terraform plan
-        env:
-          TF_VAR_environment: "prod"
-          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Terraform Apply Production
         working-directory: infrastructure/environments/prod
