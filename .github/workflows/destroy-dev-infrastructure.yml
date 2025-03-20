@@ -1,3 +1,5 @@
+name: Destroy Terraform Dev Environment
+
 on:
   pull_request:
     types: [closed]
