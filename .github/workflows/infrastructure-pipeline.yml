@@ -22,12 +22,17 @@ jobs:
       run:
         working-directory: infrastructure/backend
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup working directory
+        run: |
+          echo "Current directory: $(pwd)"
+          ls -la infrastructure/backend 
+
       - name: Debug Environment Variables
         run: |
           echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
