@@ -1,19 +1,18 @@
-name: Destroy Terraform Dev Environment
+name: Destroy Terraform Stating Environment
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_dispatch:
 
 jobs:
-  terraform-destroy-dev:
-    name: Destroy Terraform Dev Environment (PR Closed)
+  terraform-destroy-staging:
+    name: Destroy Terraform Staging Environment
     runs-on: ubuntu-latest
-    environment: development
+    environment: staging
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      TF_VAR_environment: "development"
+      TF_VAR_environment: "staging"
       TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
     steps:
       - name: Checkout
@@ -27,7 +26,7 @@ jobs:
 
       - name: Set Unique State Key for PR
         id: set-key
-        run: echo "TF_STATE_KEY=development/state-pr-${{ github.event.pull_request.number }}.tfstate" >> $GITHUB_ENV
+        run: echo "TF_STATE_KEY=staging/state.tfstate" >> $GITHUB_ENV
 
       - name: Terraform Init (Prepare for Destroy)
         working-directory: infrastructure/environments/general
