@@ -8,8 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region  = var.region
-  profile = "default"
+  region = var.region
 }
 
 resource "aws_s3_bucket" "tf_state" {
