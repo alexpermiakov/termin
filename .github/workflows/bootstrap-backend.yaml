@@ -32,7 +32,7 @@ jobs:
         env:
           TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
           TF_VAR_s3_bucket_name: ${{ secrets.s3_bucket_name }}
-          TF_VAR_dynamodb_table_name: ${{ secrets.dynamodb_table }}
+          TF_VAR_dynamodb_table_name: ${{ secrets.dynamodb_table_name }}
         run: |
           terraform init
           terraform validate
