@@ -1,4 +1,4 @@
-name: Infrastructure Pipeline
+name: Provision Infrastructure 
 
 on:
   workflow_dispatch:
