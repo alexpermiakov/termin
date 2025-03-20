@@ -25,14 +25,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup working directory
+      - name: Debug Name Variable
         run: |
-          echo "Current directory: $(pwd)"
-          ls -la  # List root directory
-
-      - name: Debug Environment Variables
-        run: |
-          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "name: ${{ vars.NAME }}"
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
