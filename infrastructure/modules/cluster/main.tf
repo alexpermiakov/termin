@@ -76,10 +76,6 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registry_read_only" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-data "aws_kms_alias" "eks_alias" {
-  name = "alias/eks/termin-eks-${var.environment}"
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.34.0"
