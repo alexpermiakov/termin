@@ -8,13 +8,8 @@ data "aws_availability_zones" "available" {
   }
 }
 
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
-
 locals {
-  cluster_name = "termin-eks-${random_string.suffix.result}"
+  cluster_name = "termin-eks-${var.environment}"
   zones_count  = length(data.aws_availability_zones.available.names)
 }
 
