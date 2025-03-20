@@ -108,21 +108,18 @@ module "eks" {
     }
   }
 
+  cluster_encryption_config = {
+    resources = ["secrets"]
+    provider = {
+      key_arn = aws_kms_key.eks_key.arn
+    }
+  }
+
   tags = {
     Environment = var.environment
     Terraform   = "true"
   }
 }
-
-# module "eks_access" {
-#   source  = "terraform-aws-modules/eks/aws//modules/access-entry"
-#   version = "20.34.0"
-
-#   cluster_name      = module.eks.cluster_name
-#   principal_arn     = "arn:aws:iam::746669194690:role/OrganizationAccountAccessRole"
-#   kubernetes_groups = ["system:masters"]
-#   type              = "STANDARD"
-# }
 
 # Role authentication:
 resource "aws_eks_access_entry" "access_entry" {
@@ -162,18 +159,18 @@ resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
 }
 
 resource "aws_kms_key" "eks_key" {
-  description             = "KMS key for EKS staging"
+  description             = "KMS key for EKS ${var.environment}"
   deletion_window_in_days = 30
   enable_key_rotation     = true
 
   tags = {
-    Name        = "eks-staging-key"
+    Name        = "eks-${var.environment}-key"
     Environment = var.environment
   }
 }
 
 resource "aws_kms_alias" "eks_alias" {
-  name          = "alias/eks/termin-eks-staging"
+  name          = "alias/eks/termin-eks-${var.environment}"
   target_key_id = aws_kms_key.eks_key.id
 
   lifecycle {
