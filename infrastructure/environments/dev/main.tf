@@ -5,8 +5,6 @@ terraform {
       version = "~> 5.89.0"
     }
   }
-
-  backend "s3" {}
 }
 
 provider "aws" {
@@ -17,6 +15,7 @@ provider "aws" {
 module "cluster" {
   source      = "../../modules/cluster"
   environment = var.environment
+  region      = var.region
 }
 
 # module "notification" {
