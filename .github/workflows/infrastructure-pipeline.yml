@@ -14,7 +14,8 @@ jobs:
   deploy-backend-dev:
     name: Deploy Backend (Dev)
     runs-on: ubuntu-latest
-    environment: development 
+    environment: development
+    if: github.ref == 'refs/heads/main'
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -35,15 +36,7 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check
 
-      - name: Check tag
-        id: check-tag
-        run: |
-          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            echo "environment=development" >> $GITHUB_OUTPUT
-          fi
-
       - name: Terraform Init and Plan and Apply
-        if: steps.check-tag.outputs.environment == 'development'
         env:
           TF_VAR_environment: "dev"
           TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
@@ -59,6 +52,7 @@ jobs:
     name: Deploy Backend (Prod)
     runs-on: ubuntu-latest
     environment: production
+    if: github.event_name == 'release'
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -78,16 +72,8 @@ jobs:
 
       - name: Terraform Format
         run: terraform fmt -check
-      
-      - name: Check tag
-        id: check-tag
-        run: |
-          if [[ ${{ github.ref }} =~ ^refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ ${{ github.event_name }} == 'release' ]]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
-          fi
-
+    
       - name: Terraform Init and Plan and Apply
-        if: steps.check-tag.outputs.environment == 'production'
         env:
           TF_VAR_environment: "prod"
           TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
@@ -104,6 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy-backend-dev
     environment: development
+    if: github.ref == 'refs/heads/main'
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -124,15 +111,7 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Check tag
-        id: check-tag
-        run: |
-          if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            echo "environment=development" >> $GITHUB_OUTPUT
-          fi
-
       - name: Terraform Init and Plan Development
-        if: steps.check-tag.outputs.environment == 'development'
         working-directory: infrastructure/environments/dev
         env:
           TF_VAR_environment: "dev"
@@ -147,7 +126,6 @@ jobs:
           terraform plan
 
       - name: Terraform Apply Development
-        if: steps.check-tag.outputs.environment == 'development'
         working-directory: infrastructure/environments/dev
         run: terraform apply -auto-approve
 
@@ -156,6 +134,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy-backend-prod
     environment: production
+    if: github.event_name == 'release'
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -176,15 +155,7 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Check tag
-        id: check-tag
-        run: |
-          if [[ ${{ github.ref }} =~ ^refs\/tags\/v[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ ${{ github.event_name }} == 'release' ]]; then
-            echo "environment=production" >> $GITHUB_OUTPUT
-          fi
-
       - name: Terraform Init and Plan Production
-        if: steps.check-tag.outputs.environment == 'production'
         working-directory: infrastructure/environments/prod
         env:
           TF_VAR_environment: "prod"
@@ -199,6 +170,5 @@ jobs:
           terraform plan
 
       - name: Terraform Apply Production
-        if: steps.check-tag.outputs.environment == 'production'
         working-directory: infrastructure/environments/prod
         run: terraform apply -auto-approve
