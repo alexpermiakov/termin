@@ -25,10 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Debug Name Variable
-        run: |
-          echo "name: ${{ vars.NAME }}"
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
@@ -48,6 +44,10 @@ jobs:
           else
             echo "environment=unknown" >> $GITHUB_OUTPUT
           fi
+
+      - name: Debug Name Variable
+        run: |
+          echo "name: ${{ vars.NAME }}"
 
       - name: Terraform Init and Plan and Apply Development
         if: steps.check-tag.outputs.environment == 'development'
