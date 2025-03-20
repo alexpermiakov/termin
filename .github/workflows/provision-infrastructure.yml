@@ -54,6 +54,7 @@ jobs:
           terraform plan
 
       - name: Terraform Apply Development
+        id: apply-step
         working-directory: infrastructure/environments/general
         continue-on-error: true
         run: terraform apply -auto-approve
@@ -104,8 +105,17 @@ jobs:
           terraform plan
 
       - name: Terraform Apply Staging
+        id: apply-step
         working-directory: infrastructure/environments/general
-        run: terraform apply -auto-approve 
+        continue-on-error: true
+        run: terraform apply -auto-approve
+
+      - name: Terraform Destroy on Failure
+        if: steps.apply-step.outcome == 'failure'
+        working-directory: infrastructure/environments/general
+        run: |
+          echo "Terraform apply failed. Starting destroy to clean up."
+          terraform destroy -auto-approve
 
   terraform-environments-prod:
     name: Terraform Environments
@@ -146,5 +156,14 @@ jobs:
           terraform plan
 
       - name: Terraform Apply Production
+        id: apply-step
         working-directory: infrastructure/environments/general
+        continue-on-error: true
         run: terraform apply -auto-approve
+
+      - name: Terraform Destroy on Failure
+        if: steps.apply-step.outcome == 'failure'
+        working-directory: infrastructure/environments/general
+        run: |
+          echo "Terraform apply failed. Starting destroy to clean up."
+          terraform destroy -auto-approve
