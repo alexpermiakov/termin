@@ -33,9 +33,6 @@ jobs:
       - name: Terraform Format
         run: terraform fmt -check
 
-      - name: Terraform Validate
-        run: terraform validate
-
       - name: Check tag
         id: check-tag
         run: |
@@ -56,6 +53,7 @@ jobs:
           TF_VAR_dynamodb_table_name: ${{ secrets.dynamodb_table }}
         run: |
           terraform init
+          terraform validate
           terraform plan
           terraform apply -auto-approve
 
@@ -68,6 +66,7 @@ jobs:
           TF_VAR_dynamodb_table_name: ${{ secrets.dynamodb_table }}
         run: |
           terraform init
+          terraform validate
           terraform plan
           terraform apply -auto-approve
 
