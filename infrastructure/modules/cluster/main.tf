@@ -119,6 +119,16 @@ module "eks" {
   }
 }
 
+# module "eks_access" {
+#   source  = "terraform-aws-modules/eks/aws//modules/access-entry"
+#   version = "20.34.0"
+
+#   cluster_name      = module.eks.cluster_name
+#   principal_arn     = "arn:aws:iam::746669194690:role/OrganizationAccountAccessRole"
+#   kubernetes_groups = ["system:masters"]
+#   type              = "STANDARD"
+# }
+
 # Role authentication:
 resource "aws_eks_access_entry" "access_entry" {
   cluster_name      = module.eks.cluster_name
