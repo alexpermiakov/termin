@@ -76,6 +76,10 @@ resource "aws_iam_role_policy_attachment" "ec2_container_registry_read_only" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
+data "aws_kms_alias" "eks_alias" {
+  name = "alias/eks/termin-eks-${var.environment}"
+}
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.34.0"
@@ -111,7 +115,7 @@ module "eks" {
   cluster_encryption_config = {
     resources = ["secrets"]
     provider = {
-      key_arn = aws_kms_key.eks_key.arn
+      key_arn = data.aws_kms_alias.eks_alias.target_key_arn
     }
   }
 
@@ -155,26 +159,6 @@ resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
     kind      = "Group"
     name      = "eks-admins"
     api_group = "rbac.authorization.k8s.io"
-  }
-}
-
-resource "aws_kms_key" "eks_key" {
-  description             = "KMS key for EKS ${var.environment}"
-  deletion_window_in_days = 30
-  enable_key_rotation     = true
-
-  tags = {
-    Name        = "eks-${var.environment}-key"
-    Environment = var.environment
-  }
-}
-
-resource "aws_kms_alias" "eks_alias" {
-  name          = "alias/eks/termin-eks-${var.environment}"
-  target_key_id = aws_kms_key.eks_key.id
-
-  lifecycle {
-    prevent_destroy = true
   }
 }
 

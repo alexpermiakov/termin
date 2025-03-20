@@ -104,11 +104,6 @@ jobs:
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table_name }}"
           terraform plan
         
-      - name: Terraform Import Existing KMS Alias (Optional)
-        working-directory: infrastructure/environments/general
-        run: |
-          terraform import aws_kms_alias.eks_alias alias/eks/termin-eks-staging || echo "Alias already imported or not needed"
-
       - name: Terraform Apply Staging
         id: apply-step
         working-directory: infrastructure/environments/general
