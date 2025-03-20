@@ -28,6 +28,7 @@ jobs:
       - name: Setup working directory
         run: |
           echo "Current directory: $(pwd)"
+          ls -la  # List root directory
           ls -la infrastructure/backend 
 
       - name: Debug Environment Variables
