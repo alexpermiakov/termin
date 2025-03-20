@@ -5,12 +5,8 @@ on:
 
 jobs:
   deploy-backend:
-    name: Deploy Backend (${{ matrix.environment }})
+    name: Deploy Backend
     runs-on: ubuntu-latest
-    environment: ${{ matrix.environment }}
-    strategy:
-      matrix:
-        environment: [development, staging, production]
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -33,7 +29,6 @@ jobs:
 
       - name: Terraform Init, Validate, Plan, and Apply
         env:
-          TF_VAR_environment: ${{ matrix.environment }}
           TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
           TF_VAR_s3_bucket_name: ${{ secrets.s3_bucket_name }}
           TF_VAR_dynamodb_table_name: ${{ secrets.dynamodb_table }}

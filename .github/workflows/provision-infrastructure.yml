@@ -40,7 +40,7 @@ jobs:
 
       - name: Set Unique State Key
         id: set-key
-        run: echo "TF_STATE_KEY=state/development/pr-${{ github.event.pull_request.number }}.tfstate" >> $GITHUB_ENV
+        run: echo "TF_STATE_KEY=development/state-pr-${{ github.event.pull_request.number }}.tfstate" >> $GITHUB_ENV
 
       - name: Terraform Init and Plan Development
         working-directory: infrastructure/environments/general
@@ -90,7 +90,7 @@ jobs:
           terraform init \
             -backend-config="region=${{secrets.AWS_DEFAULT_REGION}}" \
             -backend-config="bucket=${{ secrets.s3_bucket_name }}" \
-            -backend-config="key=state.tfstate" \
+            -backend-config="key=staging/state.tfstate" \
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table_name }}"
           terraform plan
@@ -132,7 +132,7 @@ jobs:
           terraform init \
             -backend-config="region=${{secrets.AWS_DEFAULT_REGION}}" \
             -backend-config="bucket=${{ secrets.s3_bucket_name }}" \
-            -backend-config="key=state.tfstate" \
+            -backend-config="key=production/state.tfstate" \
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table_name }}"
           terraform plan

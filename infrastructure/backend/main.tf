@@ -19,8 +19,7 @@ resource "aws_s3_bucket" "tf_state" {
   }
 
   tags = {
-    Name        = "Terraform State Bucket"
-    Environment = var.environment
+    Name = "Terraform State Bucket"
   }
 }
 
@@ -35,8 +34,7 @@ resource "aws_dynamodb_table" "terraform_locks" {
   }
 
   tags = {
-    Name        = "Terraform Lock Table"
-    Environment = var.environment
+    Name = "Terraform Lock Table"
   }
 
 }
