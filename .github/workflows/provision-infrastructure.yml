@@ -55,7 +55,15 @@ jobs:
 
       - name: Terraform Apply Development
         working-directory: infrastructure/environments/general
+        continue-on-error: true
         run: terraform apply -auto-approve
+
+      - name: Terraform Destroy on Failure
+        if: steps.apply-step.outcome == 'failure'
+        working-directory: infrastructure/environments/general
+        run: |
+          echo "Terraform apply failed. Starting destroy to clean up."
+          terraform destroy -auto-approve
 
   terraform-environments-staging:
     name: Terraform Environments
