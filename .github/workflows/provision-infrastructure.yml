@@ -103,6 +103,11 @@ jobs:
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table_name }}"
           terraform plan
+        
+      - name: Terraform Import Existing KMS Alias (Optional)
+        working-directory: infrastructure/environments/general
+        run: |
+          terraform import aws_kms_alias.eks_alias alias/eks/termin-eks-staging || echo "Alias already imported or not needed"
 
       - name: Terraform Apply Staging
         id: apply-step
@@ -116,6 +121,12 @@ jobs:
         run: |
           echo "Terraform apply failed. Starting destroy to clean up."
           terraform destroy -auto-approve
+      
+      - name: Fail the Pipeline
+        if: steps.apply-step.outcome == 'failure'
+        run: |
+          echo "Terraform apply failed. Cleanup complete. Marking job as failed."
+          exit 1
 
   terraform-environments-prod:
     name: Terraform Environments

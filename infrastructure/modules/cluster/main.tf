@@ -161,6 +161,26 @@ resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
   }
 }
 
+resource "aws_kms_key" "eks_key" {
+  description             = "KMS key for EKS staging"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+
+  tags = {
+    Name        = "eks-staging-key"
+    Environment = var.environment
+  }
+}
+
+resource "aws_kms_alias" "eks_alias" {
+  name          = "alias/eks/termin-eks-staging"
+  target_key_id = aws_kms_key.eks_key.id
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
 module "irsa-ebs-csi" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "5.39.0"
