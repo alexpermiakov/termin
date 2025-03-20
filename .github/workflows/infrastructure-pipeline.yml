@@ -38,9 +38,6 @@ jobs:
 
       - name: Terraform Init and Plan Development
         working-directory: infrastructure/environments/dev
-        env:
-          TF_VAR_environment: "dev"
-          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           terraform init \
             -backend-config="region=${{secrets.AWS_DEFAULT_REGION}}" \
@@ -49,6 +46,9 @@ jobs:
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
           terraform plan
+        env:
+          TF_VAR_environment: "dev"
+          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Terraform Apply Development
         working-directory: infrastructure/environments/dev
@@ -81,9 +81,6 @@ jobs:
 
       - name: Terraform Init and Plan Production
         working-directory: infrastructure/environments/prod
-        env:
-          TF_VAR_environment: "prod"
-          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           terraform init \
             -backend-config="region=${{secrets.AWS_DEFAULT_REGION}}" \
@@ -92,6 +89,9 @@ jobs:
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.dynamodb_table }}"
           terraform plan
+        env:
+          TF_VAR_environment: "prod"
+          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Terraform Apply Production
         working-directory: infrastructure/environments/prod
