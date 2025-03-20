@@ -86,6 +86,20 @@ jobs:
         with:
           terraform_version: 1.11.2
           terraform_wrapper: false
+      
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
+      - name: Delete KMS Alias (if exists)
+        run: |
+          if aws kms describe-alias --alias-name alias/eks/termin-eks-staging > /dev/null 2>&1; then
+            echo "Deleting existing KMS alias..."
+            aws kms delete-alias --alias-name alias/eks/termin-eks-staging
+          else
+            echo "KMS alias does not exist. Skipping deletion."
+          fi
 
       - name: Terraform Format
         run: terraform fmt -check

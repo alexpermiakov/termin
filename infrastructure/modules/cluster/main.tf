@@ -112,13 +112,6 @@ module "eks" {
     }
   }
 
-  cluster_encryption_config = {
-    resources = ["secrets"]
-    provider = {
-      key_arn = data.aws_kms_alias.eks_alias.target_key_arn
-    }
-  }
-
   tags = {
     Environment = var.environment
     Terraform   = "true"
