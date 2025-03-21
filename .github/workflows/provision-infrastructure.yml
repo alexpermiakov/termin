@@ -50,7 +50,7 @@ jobs:
 
       - name: Set Unique State Key
         id: set-key
-        run: echo "TF_STATE_KEY=development/state-pr-${{ github.event.pull_request.number }}.tfstate" >> $GITHUB_ENV
+        run: echo "TF_STATE_KEY=state-pr-${{ github.event.pull_request.number }}.tfstate" >> $GITHUB_ENV
 
       - name: Terraform Init and Plan Development
         working-directory: infrastructure/environments/general
@@ -59,7 +59,7 @@ jobs:
             -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=${TF_STATE_KEY}" \
-            -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
+            -backend-config="use_lockfile=true"
           terraform plan
 
       - name: Terraform Apply Development
@@ -117,8 +117,8 @@ jobs:
           terraform init \
             -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
-            -backend-config="key=staging/state.tfstate" \
-            -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
+            -backend-config="key=state.tfstate" \
+            -backend-config="use_lockfile=true"
           terraform plan
         
       - name: Terraform Apply Staging
@@ -182,8 +182,8 @@ jobs:
           terraform init \
             -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
-            -backend-config="key=production/state.tfstate" \
-            -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
+            -backend-config="key=state.tfstate" \
+            -backend-config="use_lockfile=true"
           terraform plan
 
       - name: Terraform Apply Production

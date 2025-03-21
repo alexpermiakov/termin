@@ -32,7 +32,6 @@ jobs:
         env:
           TF_VAR_region: ${{ vars.AWS_DEFAULT_REGION }}
           TF_VAR_s3_bucket_name: ${{ vars.s3_bucket_name }}
-          TF_VAR_dynamodb_table_name: ${{ vars.dynamodb_table_name }}
         run: |
           terraform init
           terraform validate

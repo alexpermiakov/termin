@@ -24,30 +24,16 @@ jobs:
           terraform_version: 1.11.2
           terraform_wrapper: false
 
-      - name: Set Unique State Key for PR
-        id: set-key
-        run: echo "TF_STATE_KEY=staging/state.tfstate" >> $GITHUB_ENV
-
       - name: Terraform Init (Prepare for Destroy)
         working-directory: infrastructure/environments/general
         run: |
           terraform init \
             -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
-            -backend-config="key=${TF_STATE_KEY}" \
+            -backend-config="key=state.tfstate" \
             -backend-config="encrypt=true" \
-            -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
+            -backend-config="use_lockfile=true"
 
       - name: Terraform Destroy
         working-directory: infrastructure/environments/general
         run: terraform destroy -auto-approve
-
-      - name: Delete Lock from DynamoDB
-        run: |
-          LOCK_ID="${{ vars.s3_bucket_name }}/${TF_STATE_KEY}"
-          echo "Attempting to delete lock: $LOCK_ID from table: ${{ vars.dynamodb_table_name }}"
-          aws dynamodb delete-item \
-            --table-name ${{ vars.dynamodb_table_name }} \
-            --key "{\"LockID\":{\"S\":\"$LOCK_ID\"}}" \
-            --region ${{ vars.AWS_DEFAULT_REGION }} \
-            || echo "Lock not found or already released."

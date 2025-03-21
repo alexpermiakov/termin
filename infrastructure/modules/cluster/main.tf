@@ -9,7 +9,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "termin-eks-${var.environment}"
+  cluster_name = "termin-eks"
   zones_count  = length(data.aws_availability_zones.available.names)
 }
 
@@ -118,6 +118,13 @@ module "eks" {
 resource "aws_eks_access_entry" "access_entry" {
   cluster_name      = module.eks.cluster_name
   principal_arn     = "arn:aws:iam::746669194690:user/alex"
+  type              = "STANDARD"
+  kubernetes_groups = ["eks-admins"]
+}
+
+resource "aws_eks_access_entry" "org_role" {
+  cluster_name      = module.eks.cluster_name
+  principal_arn     = "arn:aws:iam::746669194690:role/OrganizationAccountAccessRole"
   type              = "STANDARD"
   kubernetes_groups = ["eks-admins"]
 }
