@@ -117,7 +117,7 @@ module "eks" {
 # Role authentication:
 resource "aws_eks_access_entry" "access_entry" {
   cluster_name      = module.eks.cluster_name
-  principal_arn     = "arn:aws:iam::746669194690:role/OrganizationAccountAccessRole"
+  principal_arn     = "arn:aws:iam::746669194690:user/alex"
   type              = "STANDARD"
   kubernetes_groups = ["eks-admins"]
 }
@@ -159,4 +159,5 @@ module "irsa-ebs-csi" {
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = ["arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller"]
+  depends_on                    = [module.eks]
 }
