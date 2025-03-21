@@ -11,7 +11,7 @@ on:
   pull_request:
 
 jobs:
-  terraform-environments-dev:
+  terraform-environments-development:
     name: Terraform Environments (Development)
     runs-on: ubuntu-latest
     environment: development
@@ -59,7 +59,6 @@ jobs:
             -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=${TF_STATE_KEY}" \
-            -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
           terraform plan
 
@@ -119,7 +118,6 @@ jobs:
             -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=staging/state.tfstate" \
-            -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
           terraform plan
         
@@ -142,7 +140,7 @@ jobs:
           echo "Terraform apply failed. Cleanup complete. Marking job as failed."
           exit 1
 
-  terraform-environments-prod:
+  terraform-environments-production:
     name: Terraform Environments
     runs-on: ubuntu-latest
     environment: production
@@ -185,7 +183,6 @@ jobs:
             -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=production/state.tfstate" \
-            -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
           terraform plan
 
