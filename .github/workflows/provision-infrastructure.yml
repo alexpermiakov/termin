@@ -111,11 +111,6 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
       
-      - name: Force Unlock Terraform State
-        run: |
-          echo "Attempting to force unlock the Terraform state."
-          terraform force-unlock e4a5becf-ecf7-3da0-70ce-9c35eb09cc8e || echo "Force unlock failed. Proceeding with init and plan."
-
       - name: Terraform Init and Plan Staging
         working-directory: infrastructure/environments/general
         run: |
