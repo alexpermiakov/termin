@@ -133,17 +133,9 @@ provider "kubernetes" {
 data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_name
 }
-
-resource "aws_eks_access_entry" "alex_access_entry" {
-  cluster_name      = module.eks.cluster_name
-  principal_arn     = "arn:aws:iam::746669194690:user/alex"
-  type              = "STANDARD"
-  kubernetes_groups = ["eks-admins"]
-}
-
-resource "kubernetes_cluster_role" "alex_cluster_role" {
+resource "kubernetes_cluster_role" "tf_cluster_role" {
   metadata {
-    name = "alex-cluster-role"
+    name = "tf-cluster-role"
   }
 
   rule {
@@ -153,15 +145,15 @@ resource "kubernetes_cluster_role" "alex_cluster_role" {
   }
 }
 
-resource "kubernetes_cluster_role_binding" "alex_cluster_role_binding" {
+resource "kubernetes_cluster_role_binding" "tf_cluster_role_binding" {
   metadata {
-    name = "alex-cluster-role-binding"
+    name = "tf-cluster-role-binding"
   }
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "ClusterRole"
-    name      = kubernetes_cluster_role.alex_cluster_role.metadata[0].name
+    name      = kubernetes_cluster_role.tf_cluster_role.metadata[0].name
   }
 
   subject {
@@ -170,7 +162,7 @@ resource "kubernetes_cluster_role_binding" "alex_cluster_role_binding" {
     api_group = "rbac.authorization.k8s.io"
   }
 
-  depends_on = [aws_eks_access_entry.alex_access_entry]
+  depends_on = [module.eks]
 }
 
 resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
@@ -190,7 +182,7 @@ resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
     api_group = "rbac.authorization.k8s.io"
   }
 
-  depends_on = [kubernetes_cluster_role_binding.alex_cluster_role_binding]
+  depends_on = [kubernetes_cluster_role_binding.tf_cluster_role_binding]
 }
 
 module "irsa-ebs-csi" {
