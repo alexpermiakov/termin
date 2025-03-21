@@ -114,14 +114,9 @@ module "eks" {
   }
 }
 
-# Role authentication:
-resource "aws_eks_access_entry" "access_entry" {
-  cluster_name      = module.eks.cluster_name
-  principal_arn     = "arn:aws:iam::746669194690:user/alex"
-  type              = "STANDARD"
-  kubernetes_groups = ["eks-admins"]
-}
 
+
+# Role authentication:
 resource "aws_eks_access_entry" "org_role" {
   cluster_name      = module.eks.cluster_name
   principal_arn     = "arn:aws:iam::746669194690:role/OrganizationAccountAccessRole"
@@ -138,6 +133,68 @@ provider "kubernetes" {
 data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_name
 }
+
+# Access Entry for alex
+resource "aws_eks_access_entry" "alex_access_entry" {
+  cluster_name      = module.eks.cluster_name
+  principal_arn     = "arn:aws:iam::746669194690:user/alex"
+  type              = "STANDARD"
+  kubernetes_groups = ["eks-admins"]
+}
+
+# ClusterRole for alex
+resource "kubernetes_cluster_role" "alex_cluster_role" {
+  metadata {
+    name = "alex-cluster-role"
+  }
+
+  rule {
+    api_groups = ["rbac.authorization.k8s.io"]
+    resources  = ["clusterrolebindings"]
+    verbs      = ["create", "get", "list", "watch", "update", "delete"]
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "alex_cluster_role_binding" {
+  metadata {
+    name = "alex-cluster-role-binding"
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.alex_cluster_role.metadata[0].name
+  }
+
+  subject {
+    kind      = "User"
+    name      = "arn:aws:iam::746669194690:user/alex"
+    api_group = "rbac.authorization.k8s.io"
+  }
+
+  depends_on = [aws_eks_access_entry.alex_access_entry]
+}
+
+resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
+  metadata {
+    name = "eks-admins-cluster-admin-binding"
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+  }
+
+  subject {
+    kind      = "Group"
+    name      = "eks-admins"
+    api_group = "rbac.authorization.k8s.io"
+  }
+
+  depends_on = [kubernetes_cluster_role_binding.alex_cluster_role_binding]
+}
+
 
 # Role authorization:
 resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
