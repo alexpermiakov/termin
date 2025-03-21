@@ -11,7 +11,7 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
     defaults:
       run:
         working-directory: infrastructure/backend
@@ -30,9 +30,9 @@ jobs:
 
       - name: Terraform Init, Validate, Plan, and Apply
         env:
-          TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
-          TF_VAR_s3_bucket_name: ${{ secrets.s3_bucket_name }}
-          TF_VAR_dynamodb_table_name: ${{ secrets.dynamodb_table_name }}
+          TF_VAR_region: ${{ vars.AWS_DEFAULT_REGION }}
+          TF_VAR_s3_bucket_name: ${{ vars.s3_bucket_name }}
+          TF_VAR_dynamodb_table_name: ${{ vars.dynamodb_table_name }}
         run: |
           terraform init
           terraform validate

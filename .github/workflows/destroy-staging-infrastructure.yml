@@ -11,9 +11,9 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
       TF_VAR_environment: "staging"
-      TF_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
+      TF_VAR_region: ${{ vars.AWS_DEFAULT_REGION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -32,11 +32,11 @@ jobs:
         working-directory: infrastructure/environments/general
         run: |
           terraform init \
-            -backend-config="region=${{ secrets.AWS_DEFAULT_REGION }}" \
-            -backend-config="bucket=${{ secrets.s3_bucket_name }}" \
+            -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
+            -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=${TF_STATE_KEY}" \
             -backend-config="encrypt=true" \
-            -backend-config="dynamodb_table=${{ secrets.dynamodb_table_name }}"
+            -backend-config="dynamodb_table=${{ vars.dynamodb_table_name }}"
 
       - name: Terraform Destroy
         working-directory: infrastructure/environments/general
@@ -44,10 +44,10 @@ jobs:
 
       - name: Delete Lock from DynamoDB
         run: |
-          LOCK_ID="${{ secrets.s3_bucket_name }}/${TF_STATE_KEY}"
-          echo "Attempting to delete lock: $LOCK_ID from table: ${{ secrets.dynamodb_table_name }}"
+          LOCK_ID="${{ vars.s3_bucket_name }}/${TF_STATE_KEY}"
+          echo "Attempting to delete lock: $LOCK_ID from table: ${{ vars.dynamodb_table_name }}"
           aws dynamodb delete-item \
-            --table-name ${{ secrets.dynamodb_table_name }} \
+            --table-name ${{ vars.dynamodb_table_name }} \
             --key "{\"LockID\":{\"S\":\"$LOCK_ID\"}}" \
-            --region ${{ secrets.AWS_DEFAULT_REGION }} \
+            --region ${{ vars.AWS_DEFAULT_REGION }} \
             || echo "Lock not found or already released."
