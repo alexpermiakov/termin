@@ -166,5 +166,4 @@ module "irsa-ebs-csi" {
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = ["arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller"]
-  depends_on                    = [module.eks]
 }
