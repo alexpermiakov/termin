@@ -17,8 +17,6 @@ jobs:
     environment: development
     if: github.event_name == 'pull_request'
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ vars.AWS_REGION }}
       TF_VAR_environment: "development"
       TF_VAR_region: ${{ vars.AWS_REGION }}
@@ -100,9 +98,9 @@ jobs:
 
       - name: Print Environment Variables
         run: |
-          echo "AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}"
-          echo "AWS_REGION: ${{ secrets.AWS_REGION }}"
-          echo "github.run_id: ${{ secrets.github.run_id }}"
+          echo "AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}"
+          echo "AWS_REGION: ${{ vars.AWS_REGION }}"
+          echo "github.run_id: ${{ vars.github.run_id }}"
           echo "role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole"
 
       - name: Configure AWS Credentials
@@ -162,8 +160,6 @@ jobs:
     environment: production
     if: github.event_name == 'release'
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ vars.AWS_REGION }}
       TF_VAR_environment: "production"
       TF_VAR_region: ${{ vars.AWS_REGION }}
