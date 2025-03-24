@@ -3,3 +3,5 @@
 files/
 .DS_Store
 errored.tfstate
+terraform.tfstate.backup
+terraform.tfstate

@@ -101,8 +101,6 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
           aws-region: eu-central-1
-          role-session-name: github-${{ github.run_id }}
-          audience: sts.amazonaws.com
       
       - name: Debug OIDC Token
         run: |
