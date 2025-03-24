@@ -114,12 +114,10 @@ module "eks" {
   }
 }
 
-
-
 # Role authentication:
 resource "aws_eks_access_entry" "org_role" {
   cluster_name      = module.eks.cluster_name
-  principal_arn     = "arn:aws:iam::746669194690:role/OrganizationAccountAccessRole"
+  principal_arn     = "arn:aws:iam::${vars.aws_account_id}:role/OrganizationAccountAccessRole"
   type              = "STANDARD"
   kubernetes_groups = ["eks-admins"]
 }
@@ -158,7 +156,7 @@ resource "kubernetes_cluster_role_binding" "tf_cluster_role_binding" {
 
   subject {
     kind      = "User"
-    name      = "arn:aws:iam::746669194690:user/alex"
+    name      = aws_iam_role.terraform_execution_role.arn
     api_group = "rbac.authorization.k8s.io"
   }
 

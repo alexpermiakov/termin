@@ -10,6 +10,10 @@ on:
       - published
   pull_request:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   terraform-environments-development:
     name: Terraform Environments (Development)
@@ -19,9 +23,10 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
       TF_VAR_environment: "development"
-      TF_VAR_region: ${{ vars.AWS_DEFAULT_REGION }}
+      TF_VAR_region: ${{ vars.AWS_REGION }}
+      TF_VAR_aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -56,7 +61,7 @@ jobs:
         working-directory: infrastructure/environments/general
         run: |
           terraform init \
-            -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=${TF_STATE_KEY}" \
             -backend-config="use_lockfile=true"
@@ -81,11 +86,9 @@ jobs:
     environment: staging
     if: github.ref == 'refs/heads/main'
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
       TF_VAR_environment: "staging"
-      TF_VAR_region: ${{ vars.AWS_DEFAULT_REGION }}
+      TF_VAR_region: ${{ vars.AWS_REGION }}
+      TF_VAR_aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -95,6 +98,13 @@ jobs:
         with:
           terraform_version: 1.11.2
           terraform_wrapper: false
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: github-${{ github.run_id }}
 
       - name: Delete KMS Alias (if exists)
         run: |
@@ -115,7 +125,7 @@ jobs:
         working-directory: infrastructure/environments/general
         run: |
           terraform init \
-            -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=state.tfstate" \
             -backend-config="use_lockfile=true"
@@ -148,9 +158,10 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
       TF_VAR_environment: "production"
-      TF_VAR_region: ${{ vars.AWS_DEFAULT_REGION }}
+      TF_VAR_region: ${{ vars.AWS_REGION }}
+      TF_VAR_aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -180,7 +191,7 @@ jobs:
         working-directory: infrastructure/environments/general
         run: |
           terraform init \
-            -backend-config="region=${{ vars.AWS_DEFAULT_REGION }}" \
+            -backend-config="region=${{ vars.AWS_REGION }}" \
             -backend-config="bucket=${{ vars.s3_bucket_name }}" \
             -backend-config="key=state.tfstate" \
             -backend-config="use_lockfile=true"
