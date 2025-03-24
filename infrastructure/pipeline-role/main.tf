@@ -1,7 +1,7 @@
 resource "aws_iam_openid_connect_provider" "github_oidc" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["74F3A68F16524F15424927704C9506F55A9316BD"]
+  thumbprint_list = ["74f3a68f16524f15424927704c9506f55a9316bd"]
 }
 
 resource "aws_iam_role" "terraform_execution_role" {
@@ -13,7 +13,7 @@ resource "aws_iam_role" "terraform_execution_role" {
       Action = "sts:AssumeRoleWithWebIdentity",
       Effect = "Allow",
       Principal = {
-        Federated = "arn:aws:iam::746669194690:oidc-provider/token.actions.githubusercontent.com"
+        Federated = "arn:aws:iam::746669194690:oidc-provider/https://token.actions.githubusercontent.com"
       },
       Condition = {
         StringEquals = {
