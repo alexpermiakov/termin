@@ -11,14 +11,10 @@ resource "aws_iam_role" "terraform_execution_role" {
       },
       Condition = {
         StringEquals = {
-          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:iss" = "https://token.actions.githubusercontent.com"
+          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         },
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = [
-            "repo:alexpermiakov/termin:*",
-            "repo:alexpermiakov/termin:pull_request"
-          ]
+          "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:*"
         }
       }
     }]
