@@ -91,12 +91,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
+      
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.11.2
           terraform_wrapper: false
+
+      - name: Print Environment Variables
+        run: |
+          echo "AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}"
+          echo "AWS_REGION: ${{ secrets.AWS_REGION }}"
+          echo "github.run_id: ${{ secrets.github.run_id }}"
+          echo "role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
