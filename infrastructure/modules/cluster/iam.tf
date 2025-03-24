@@ -15,7 +15,7 @@ resource "aws_iam_role" "terraform_execution_role" {
           "token.actions.githubusercontent.com:iss" = "https://token.actions.githubusercontent.com"
         },
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:environment:staging"
+          "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:environment:staging:ref:refs/heads/main"
         }
       }
     }]
