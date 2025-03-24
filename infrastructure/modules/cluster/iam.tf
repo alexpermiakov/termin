@@ -20,6 +20,9 @@ resource "aws_iam_role" "terraform_execution_role" {
         Federated = aws_iam_openid_connect_provider.github.arn
       },
       Condition = {
+        StringEquals = {
+          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+        },
         StringLike = {
           "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:*"
         }

@@ -46,7 +46,6 @@ jobs:
             echo "KMS alias does not exist. Skipping deletion."
           fi
 
-
       - name: Terraform Format
         run: terraform fmt -check
 
