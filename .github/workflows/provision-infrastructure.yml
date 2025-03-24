@@ -76,7 +76,6 @@ jobs:
   terraform-environments-staging:
     name: Terraform Environments
     runs-on: ubuntu-latest
-    environment: staging
     permissions:
       id-token: write
       contents: read
@@ -84,8 +83,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     env:
       TF_VAR_environment: "staging"
-      TF_VAR_region: ${{ vars.AWS_REGION }}
-      TF_VAR_aws_account_id: ${{ vars.AWS_ACCOUNT_ID }}
+      TF_VAR_region: eu-central-1
+      TF_VAR_aws_account_id: 746669194690
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -96,19 +95,12 @@ jobs:
           terraform_version: 1.11.2
           terraform_wrapper: false
 
-      - name: Print Environment Variables
-        run: |
-          echo "AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}"
-          echo "AWS_REGION: ${{ vars.AWS_REGION }}"
-          echo "github.run_id: ${{ github.run_id }}"
-          echo "role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole"
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         id: oidc
         with:
-          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole
-          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
+          aws-region: eu-central-1
           role-session-name: github-${{ github.run_id }}
           audience: sts.amazonaws.com
       
@@ -136,8 +128,8 @@ jobs:
         working-directory: infrastructure/environments/general
         run: |
           terraform init \
-            -backend-config="region=${{ vars.AWS_REGION }}" \
-            -backend-config="bucket=${{ vars.s3_bucket_name }}" \
+            -backend-config="region=eu-central-1" \
+            -backend-config="bucket=terraform-state-terminapp" \
             -backend-config="key=state.tfstate" \
             -backend-config="use_lockfile=true"
           terraform plan
