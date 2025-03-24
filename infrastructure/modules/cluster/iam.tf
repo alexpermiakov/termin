@@ -1,7 +1,3 @@
-data "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
-}
-
 resource "aws_iam_role" "terraform_execution_role" {
   name = "TerraformExecutionRole"
 
@@ -18,7 +14,7 @@ resource "aws_iam_role" "terraform_execution_role" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         },
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:*"
+          "token.actions.githubusercontent.com:sub" = "*"
         }
       }
     }]
