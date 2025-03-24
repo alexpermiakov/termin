@@ -9,14 +9,12 @@ resource "aws_iam_role" "terraform_execution_role" {
       Principal = {
         Federated = "arn:aws:iam::746669194690:oidc-provider/token.actions.githubusercontent.com"
       },
-      "Condition" : {
-        "StringLike" : {
-          "token.actions.githubusercontent.com:sub" : "repo:alexpermiakov/termin:*"
-        },
-        "ForAllValues:StringEquals" : {
-          "token.actions.githubusercontent.com:iss" : "https://token.actions.githubusercontent.com",
-          "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"
-        }
+      StringEquals = {
+        "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com",
+        "token.actions.githubusercontent.com:iss" = "https://token.actions.githubusercontent.com"
+      },
+      StringLike = {
+        "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:*"
       }
     }]
   })
