@@ -14,7 +14,7 @@ resource "aws_iam_role" "terraform_execution_role" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         },
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "*"
+          "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:ref:refs/heads/main"
         }
       }
     }]
