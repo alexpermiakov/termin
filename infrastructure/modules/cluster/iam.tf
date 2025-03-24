@@ -20,8 +20,6 @@ resource "aws_iam_role" "terraform_execution_role" {
       }
     }]
   })
-
-  depends_on = [aws_iam_openid_connect_provider.github]
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_admin" {
