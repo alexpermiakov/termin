@@ -13,7 +13,6 @@ locals {
   zones_count  = length(data.aws_availability_zones.available.names)
 }
 
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.19.0"
