@@ -16,7 +16,7 @@ resource "aws_iam_role" "terraform_execution_role" {
         },
         StringLike = {
           "token.actions.githubusercontent.com:sub" = [
-            "repo:alexpermiakov/termin:environment:${var.environment}",
+            "repo:alexpermiakov/termin:environment:staging",
             "repo:alexpermiakov/termin:pull_request"
           ]
         }
