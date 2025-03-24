@@ -11,7 +11,7 @@ resource "aws_iam_role" "terraform_execution_role" {
       Action = "sts:AssumeRoleWithWebIdentity",
       Effect = "Allow",
       Principal = {
-        Federated = data.aws_iam_openid_connect_provider.github.arn
+        Federated = "arn:aws:iam::746669194690:oidc-provider/token.actions.githubusercontent.com"
       },
       Condition = {
         StringEquals = {
