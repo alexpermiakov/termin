@@ -105,18 +105,17 @@ jobs:
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
-        id: configure-aws-credentials
+        id: oidc
         with:
           role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole
           aws-region: ${{ vars.AWS_REGION }}
           role-session-name: github-${{ github.run_id }}
           audience: sts.amazonaws.com
       
-      - name: Dump OIDC token (debug)
+      - name: Debug OIDC Token
         run: |
-          echo "${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" | base64 --decode
-        env:
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ steps.configure-aws-credentials.outputs.oidc-token }}
+          echo "OIDC Token: ${{ steps.oidc.outputs.id-token }}"
+        if: always()
 
       - name: Delete KMS Alias (if exists)
         run: |
