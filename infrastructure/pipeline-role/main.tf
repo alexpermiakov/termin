@@ -4,31 +4,20 @@ resource "aws_iam_openid_connect_provider" "github_oidc" {
   thumbprint_list = ["74f3a68f16524f15424927704c9506f55a9316bd"]
 }
 
-resource "aws_iam_role" "terraform_execution_role" {
-  name = "TerraformExecutionRole"
+module "github_actions_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version = "5.5.0"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Action = "sts:AssumeRoleWithWebIdentity",
-      Effect = "Allow",
-      Principal = {
-        Federated = "arn:aws:iam::746669194690:oidc-provider/token.actions.githubusercontent.com"
-      },
-      Condition = {
-        StringEquals = {
-          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com",
-          "token.actions.githubusercontent.com:iss" = "https://token.actions.githubusercontent.com"
-        },
-        StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:alexpermiakov/termin:*"
-        }
-      }
-    }]
-  })
-}
+  create_role = true
+  role_name   = "TerraformExecutionRole"
 
-resource "aws_iam_role_policy_attachment" "terraform_admin" {
-  role       = aws_iam_role.terraform_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  provider_url = replace(aws_iam_openid_connect_provider.github_oidc.url, "https://", "")
+
+  oidc_subjects_with_wildcards = [
+    "repo:alexpermiakov/termin:*"
+  ]
+
+  role_policy_arns = [
+    "arn:aws:iam::aws:policy/AdministratorAccess"
+  ]
 }

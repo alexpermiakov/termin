@@ -101,7 +101,8 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
           aws-region: eu-central-1
-      
+          audience: sts.amazonaws.com 
+
       - name: Debug OIDC Token
         run: |
           echo "OIDC Token: ${{ steps.oidc.outputs.id-token }}"
