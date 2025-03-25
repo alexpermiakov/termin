@@ -7,6 +7,9 @@ jobs:
   bootstrap-backend:
     name: Bootstrap Backend Production
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     defaults:
       run:
         working-directory: infrastructure/backend
