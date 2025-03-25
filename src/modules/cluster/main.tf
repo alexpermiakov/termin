@@ -113,7 +113,6 @@ module "eks" {
   }
 }
 
-# Role authentication:
 resource "aws_eks_access_entry" "org_role" {
   cluster_name      = module.eks.cluster_name
   principal_arn     = "arn:aws:iam::${var.aws_account_id}:role/OrganizationAccountAccessRole"
@@ -121,66 +120,66 @@ resource "aws_eks_access_entry" "org_role" {
   kubernetes_groups = ["eks-admins"]
 }
 
-provider "kubernetes" {
-  host                   = module.eks.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-}
+# provider "kubernetes" {
+#   host                   = module.eks.cluster_endpoint
+#   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+#   token                  = data.aws_eks_cluster_auth.cluster.token
+# }
 
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_name
-}
-resource "kubernetes_cluster_role" "tf_cluster_role" {
-  metadata {
-    name = "tf-cluster-role"
-  }
+# data "aws_eks_cluster_auth" "cluster" {
+#   name = module.eks.cluster_name
+# }
+# resource "kubernetes_cluster_role" "tf_cluster_role" {
+#   metadata {
+#     name = "tf-cluster-role"
+#   }
 
-  rule {
-    api_groups = ["rbac.authorization.k8s.io"]
-    resources  = ["clusterrolebindings"]
-    verbs      = ["create", "get", "list", "watch", "update", "delete"]
-  }
-}
+#   rule {
+#     api_groups = ["rbac.authorization.k8s.io"]
+#     resources  = ["clusterrolebindings"]
+#     verbs      = ["create", "get", "list", "watch", "update", "delete"]
+#   }
+# }
 
-resource "kubernetes_cluster_role_binding" "tf_cluster_role_binding" {
-  metadata {
-    name = "tf-cluster-role-binding"
-  }
+# resource "kubernetes_cluster_role_binding" "tf_cluster_role_binding" {
+#   metadata {
+#     name = "tf-cluster-role-binding"
+#   }
 
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = kubernetes_cluster_role.tf_cluster_role.metadata[0].name
-  }
+#   role_ref {
+#     api_group = "rbac.authorization.k8s.io"
+#     kind      = "ClusterRole"
+#     name      = kubernetes_cluster_role.tf_cluster_role.metadata[0].name
+#   }
 
-  subject {
-    kind      = "User"
-    name      = "arn:aws:iam::${var.aws_account_id}:role/TerraformExecutionRole"
-    api_group = "rbac.authorization.k8s.io"
-  }
+#   subject {
+#     kind      = "User"
+#     name      = "arn:aws:iam::${var.aws_account_id}:role/TerraformExecutionRole"
+#     api_group = "rbac.authorization.k8s.io"
+#   }
 
-  depends_on = [module.eks]
-}
+#   depends_on = [module.eks]
+# }
 
-resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
-  metadata {
-    name = "eks-admins-cluster-admin-binding"
-  }
+# resource "kubernetes_cluster_role_binding" "eks_admins_binding" {
+#   metadata {
+#     name = "eks-admins-cluster-admin-binding"
+#   }
 
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
+#   role_ref {
+#     api_group = "rbac.authorization.k8s.io"
+#     kind      = "ClusterRole"
+#     name      = "cluster-admin"
+#   }
 
-  subject {
-    kind      = "Group"
-    name      = "eks-admins"
-    api_group = "rbac.authorization.k8s.io"
-  }
+#   subject {
+#     kind      = "Group"
+#     name      = "eks-admins"
+#     api_group = "rbac.authorization.k8s.io"
+#   }
 
-  depends_on = [kubernetes_cluster_role_binding.tf_cluster_role_binding]
-}
+#   depends_on = [kubernetes_cluster_role_binding.tf_cluster_role_binding]
+# }
 
 module "irsa-ebs-csi" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
