@@ -7,6 +7,9 @@ jobs:
   terraform-destroy-production:
     name: Destroy Terraform Production
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     env:
       TF_VAR_environment: "production"
       TF_VAR_region: "eu-central-1"
