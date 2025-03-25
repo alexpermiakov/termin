@@ -7,9 +7,6 @@ jobs:
   bootstrap-backend:
     name: Bootstrap Backend Production
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu:latest
-      options: --workdir /github/workspace
     permissions:
       id-token: write
       contents: read
