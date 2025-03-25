@@ -1,4 +1,4 @@
-name: Bootstrap Backend
+name: Bootstrap Backend Development
 
 on:
   workflow_dispatch:
