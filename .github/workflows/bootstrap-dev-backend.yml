@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-backend:
-    name: Deploy Backend
+  bootstrap-backend:
+    name: Bootstrap Backend Development
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -24,7 +24,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.1.0
         id: oidc
         with:
-          role-to-assume: arn:aws:iam::585008076441:role/TerraformExecutionRole
+          role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
 
