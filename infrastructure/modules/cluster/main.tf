@@ -116,7 +116,7 @@ module "eks" {
 # Role authentication:
 resource "aws_eks_access_entry" "org_role" {
   cluster_name      = module.eks.cluster_name
-  principal_arn     = "arn:aws:iam::${vars.aws_account_id}:role/OrganizationAccountAccessRole"
+  principal_arn     = "arn:aws:iam::${var.aws_account_id}:role/OrganizationAccountAccessRole"
   type              = "STANDARD"
   kubernetes_groups = ["eks-admins"]
 }
