@@ -85,7 +85,7 @@ jobs:
     env:
       TF_VAR_environment: "production"
       TF_VAR_region: eu-central-1
-      TF_VAR_aws_account_id: 746669194690
+      TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -100,7 +100,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.1.0
         id: oidc
         with:
-          role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
 
@@ -121,10 +121,6 @@ jobs:
       
       - name: Terraform Init and Plan Production
         working-directory: infrastructure/entry
-        env:
-          TF_VAR_environment: "production"
-          TF_VAR_region: eu-central-1
-          TF_VAR_aws_account_id: 746669194690
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
