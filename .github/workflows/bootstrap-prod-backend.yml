@@ -30,6 +30,9 @@ jobs:
           role-to-assume: arn:aws:iam::585008076441:role/TerraformExecutionRole
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
+    
+      - name: Who Am I (AWS)
+        run: aws sts get-caller-identity
 
       - name: Terraform Format
         run: terraform fmt -check
