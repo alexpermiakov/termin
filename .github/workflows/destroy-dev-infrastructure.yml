@@ -41,7 +41,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
-            -backend-config="bucket=terraform-state-terminapp-dev-1" \
+            -backend-config="bucket=terraform-state-terminapp" \
             -backend-config="key=${TF_STATE_KEY}"
 
       - name: Terraform Destroy
