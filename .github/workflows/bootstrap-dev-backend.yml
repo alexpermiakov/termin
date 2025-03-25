@@ -7,6 +7,10 @@ jobs:
   bootstrap-backend:
     name: Bootstrap Backend Development
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: "" 
+      AWS_SECRET_ACCESS_KEY: ""
+      AWS_SESSION_TOKEN: ""
     permissions:
       id-token: write
       contents: read
