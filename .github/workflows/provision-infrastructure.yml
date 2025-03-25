@@ -84,7 +84,16 @@ jobs:
         run: |
           echo "Terraform apply failed. Cleanup complete. Marking job as failed."
           exit 1
-
+  
+  terraform-environments-staging:
+    name: Terraform Development
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Echo Staging 
+        run: echo "Staging deploy is not yet implemented."
+    
   terraform-environments-production:
     name: Terraform Production
     runs-on: ubuntu-latest
@@ -92,7 +101,7 @@ jobs:
       id-token: write
       contents: read
 
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'release'
     env:
       TF_VAR_environment: "production"
       TF_VAR_region: eu-central-1
