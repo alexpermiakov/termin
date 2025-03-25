@@ -7,6 +7,9 @@ jobs:
   bootstrap-backend:
     name: Bootstrap Backend Production
     runs-on: ubuntu-latest
+    container:
+      image: ubuntu:latest
+      options: --workdir /github/workspace
     permissions:
       id-token: write
       contents: read
@@ -26,7 +29,6 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=" >> $GITHUB_ENV
           echo "AWS_SESSION_TOKEN=" >> $GITHUB_ENV
         shell: bash
-
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
