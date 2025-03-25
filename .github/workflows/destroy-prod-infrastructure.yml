@@ -19,6 +19,14 @@ jobs:
         with:
           terraform_version: 1.11.2
           terraform_wrapper: false
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        id: oidc
+        with:
+          role-to-assume: arn:aws:iam::585008076441:role/TerraformExecutionRole
+          aws-region: eu-central-1
+          audience: sts.amazonaws.com 
 
       - name: Terraform Init (Prepare for Destroy)
         working-directory: src/entry

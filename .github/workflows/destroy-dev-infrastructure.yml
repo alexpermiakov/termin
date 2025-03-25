@@ -1,8 +1,7 @@
 name: Destroy Terraform Development
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_dispatch:
 
 jobs:
   terraform-destroy-dev:
@@ -20,6 +19,14 @@ jobs:
         with:
           terraform_version: 1.11.2
           terraform_wrapper: false
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        id: oidc
+        with:
+          role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
+          aws-region: eu-central-1
+          audience: sts.amazonaws.com 
 
       - name: Set Unique State Key for PR
         id: set-key
