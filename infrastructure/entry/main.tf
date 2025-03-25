@@ -14,25 +14,25 @@ provider "aws" {
 }
 
 module "cluster" {
-  source         = "../../modules/cluster"
+  source         = "../modules/cluster"
   environment    = var.environment
   region         = var.region
   aws_account_id = var.aws_account_id
 }
 
 # module "notification" {
-#   source  = "../../modules/notification"
+#   source  = "../modules/notification"
 #   runtime = "nodejs22.x"
 #   period  = 86400
 # }
 
 # module "scraping" {
-#   source  = "../../modules/scraping"
+#   source  = "../modules/scraping"
 #   runtime = "nodejs22.x"
 # }
 
 # module "networking" {
-#   source         = "../../modules/networking"
+#   source         = "../modules/networking"
 #   vpc_cidr_block = "10.0.0.0/20"
 #   subnet_cidr_blocks = [
 #     "10.0.1.0/24",
