@@ -79,12 +79,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-
+      
     if: github.ref == 'refs/heads/main'
-    env:
-      TF_VAR_environment: "production"
-      TF_VAR_region: eu-central-1
-      TF_VAR_aws_account_id: 746669194690
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -103,11 +99,6 @@ jobs:
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
 
-      - name: Debug OIDC Token
-        run: |
-          echo "OIDC Token: ${{ steps.oidc.outputs.id-token }}"
-        if: always()
-
       - name: Delete KMS Alias (if exists)
         run: |
           if aws kms describe-alias --alias-name alias/eks/termin-eks-production > /dev/null 2>&1; then
@@ -125,6 +116,10 @@ jobs:
       
       - name: Terraform Init and Plan Production
         working-directory: infrastructure/entry
+        env:
+          TF_VAR_environment: "production"
+          TF_VAR_region: eu-central-1
+          TF_VAR_aws_account_id: 746669194690
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
