@@ -76,6 +76,7 @@ jobs:
   terraform-environments-production:
     name: Terraform Environments
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       id-token: write
       contents: read
