@@ -30,7 +30,7 @@ jobs:
         run: echo "TF_STATE_KEY=development/state-pr-${{ github.event.pull_request.number }}.tfstate" >> $GITHUB_ENV
 
       - name: Terraform Init (Prepare for Destroy)
-        working-directory: infrastructure/environments/general
+        working-directory: infrastructure/entry
         run: |
           terraform init \
             -backend-config="region=${{ vars.AWS_REGION }}" \
@@ -38,5 +38,5 @@ jobs:
             -backend-config="key=${TF_STATE_KEY}"
 
       - name: Terraform Destroy
-        working-directory: infrastructure/environments/general
+        working-directory: infrastructure/entry
         run: terraform destroy -auto-approve
