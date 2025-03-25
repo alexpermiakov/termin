@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "tf_state" {
-  bucket = "terraform-state-terminapp"
+  bucket = var.s3_bucket_name
 
   lifecycle {
     prevent_destroy = true

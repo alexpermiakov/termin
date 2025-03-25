@@ -61,7 +61,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
-            -backend-config="bucket=terraform-state-terminapp" \
+            -backend-config="bucket=terraform-state-terminapp-dev-1" \
             -backend-config="key=state.tfstate" \
             -backend-config="use_lockfile=true"
           terraform plan
@@ -135,7 +135,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
-            -backend-config="bucket=terraform-state-terminapp" \
+            -backend-config="bucket=terraform-state-terminapp-prod-1" \
             -backend-config="key=state.tfstate" \
             -backend-config="use_lockfile=true"
           terraform plan
