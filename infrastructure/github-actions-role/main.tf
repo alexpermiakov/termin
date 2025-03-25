@@ -14,8 +14,7 @@ module "github_actions_role" {
   provider_url = replace(aws_iam_openid_connect_provider.github_oidc.url, "https://", "")
 
   oidc_subjects_with_wildcards = [
-    "repo:alexpermiakov/termin:*",
-    "repo:alexpermiakov/termin:environment:${var.environment}",
+    "repo:alexpermiakov/termin:*"
   ]
 
   role_policy_arns = [

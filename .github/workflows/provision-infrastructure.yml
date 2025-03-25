@@ -76,7 +76,6 @@ jobs:
   terraform-environments-production:
     name: Terraform Environments
     runs-on: ubuntu-latest
-    environment: production
     permissions:
       id-token: write
       contents: read
@@ -85,7 +84,7 @@ jobs:
     env:
       TF_VAR_environment: "production"
       TF_VAR_region: eu-central-1
-      TF_VAR_aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+      TF_VAR_aws_account_id: 746669194690
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -100,7 +99,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.1.0
         id: oidc
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/TerraformExecutionRole
+          role-to-assume: arn:aws:iam::${{ vars.TF_VAR_aws_account_id }}:role/TerraformExecutionRole
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
 
