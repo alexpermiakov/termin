@@ -7,13 +7,9 @@ jobs:
   terraform-destroy-production:
     name: Destroy Terraform Production
     runs-on: ubuntu-latest
-    environment: production
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ vars.AWS_REGION }}
       TF_VAR_environment: "production"
-      TF_VAR_region: ${{ vars.AWS_REGION }}
+      TF_VAR_region: "eu-central-1"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,8 +24,8 @@ jobs:
         working-directory: infrastructure/entry
         run: |
           terraform init \
-            -backend-config="region=${{ vars.AWS_REGION }}" \
-            -backend-config="bucket=${{ vars.s3_bucket_name }}" \
+            -backend-config="region=eu-central-1" \
+            -backend-config="bucket=terraform-state-terminapp" \
             -backend-config="key=state.tfstate" \
             -backend-config="encrypt=true" \
             -backend-config="use_lockfile=true"
