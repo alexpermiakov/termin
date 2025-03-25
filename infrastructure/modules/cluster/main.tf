@@ -155,7 +155,7 @@ resource "kubernetes_cluster_role_binding" "tf_cluster_role_binding" {
 
   subject {
     kind      = "User"
-    name      = module.github_actions_role.arn
+    name      = "arn:aws:iam::746669194690:role/TerraformExecutionRole"
     api_group = "rbac.authorization.k8s.io"
   }
 
