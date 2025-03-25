@@ -7,6 +7,9 @@ jobs:
   bootstrap-backend:
     name: Bootstrap Backend Production
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: "" 
+      AWS_SECRET_ACCESS_KEY: ""
     permissions:
       id-token: write
       contents: read
@@ -29,7 +32,8 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::585008076441:role/TerraformExecutionRole
           aws-region: eu-central-1
-          audience: sts.amazonaws.com 
+          audience: sts.amazonaws.com
+          role-session-name: GitHubActions-${{ github.run_id }}
     
       - name: Who Am I (AWS)
         run: aws sts get-caller-identity

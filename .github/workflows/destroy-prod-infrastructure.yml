@@ -1,11 +1,11 @@
-name: Destroy Terraform Production Environment
+name: Destroy Terraform Production
 
 on:
   workflow_dispatch:
 
 jobs:
   terraform-destroy-production:
-    name: Destroy Terraform Production Environment
+    name: Destroy Terraform Production
     runs-on: ubuntu-latest
     environment: production
     env:

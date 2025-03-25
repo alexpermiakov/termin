@@ -1,4 +1,4 @@
-name: Destroy Terraform Dev Environment
+name: Destroy Terraform Development
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   terraform-destroy-dev:
-    name: Destroy Terraform Dev Environment (PR Closed)
+    name: Destroy Terraform Development
     runs-on: ubuntu-latest
     environment: development
     env:
