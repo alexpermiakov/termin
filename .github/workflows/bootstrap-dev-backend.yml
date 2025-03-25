@@ -12,7 +12,7 @@ jobs:
       contents: read
     defaults:
       run:
-        working-directory: infrastructure/backend
+        working-directory: src/backend
     steps:
       - name: Checkout
         uses: actions/checkout@v2

@@ -57,7 +57,7 @@ jobs:
         run: terraform validate
       
       - name: Terraform Init and Plan Development
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
@@ -68,13 +68,13 @@ jobs:
         
       - name: Terraform Apply Development
         id: apply-step
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         continue-on-error: true
         run: terraform apply -auto-approve
 
       - name: Terraform Destroy on Failure
         if: steps.apply-step.outcome == 'failure'
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         run: |
           echo "Terraform apply failed. Starting destroy to clean up."
           terraform destroy -auto-approve
@@ -131,7 +131,7 @@ jobs:
         run: terraform validate
       
       - name: Terraform Init and Plan Production
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
@@ -142,13 +142,13 @@ jobs:
         
       - name: Terraform Apply Production
         id: apply-step
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         continue-on-error: true
         run: terraform apply -auto-approve
 
       - name: Terraform Destroy on Failure
         if: steps.apply-step.outcome == 'failure'
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         run: |
           echo "Terraform apply failed. Starting destroy to clean up."
           terraform destroy -auto-approve

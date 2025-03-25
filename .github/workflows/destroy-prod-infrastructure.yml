@@ -21,7 +21,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Terraform Init (Prepare for Destroy)
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
@@ -31,5 +31,5 @@ jobs:
             -backend-config="use_lockfile=true"
 
       - name: Terraform Destroy
-        working-directory: infrastructure/entry
+        working-directory: src/entry
         run: terraform destroy -auto-approve
