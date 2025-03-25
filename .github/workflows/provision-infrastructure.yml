@@ -99,7 +99,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.1.0
         id: oidc
         with:
-          role-to-assume: arn:aws:iam::${{ vars.TF_VAR_aws_account_id }}:role/TerraformExecutionRole
+          role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
 
