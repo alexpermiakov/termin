@@ -38,7 +38,7 @@ jobs:
         env:
           TF_VAR_region: eu-central-1
         run: |
-          terraform init
+          terraform init -reconfigure
           terraform validate
           terraform plan
           terraform apply -auto-approve
