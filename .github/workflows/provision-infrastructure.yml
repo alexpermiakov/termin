@@ -86,7 +86,7 @@ jobs:
           exit 1
   
   terraform-environments-staging:
-    name: Terraform Development
+    name: Terraform Staging
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
