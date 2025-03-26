@@ -68,14 +68,14 @@ jobs:
         id: apply-step
         working-directory: src/entry
         continue-on-error: true
-        run: terraform apply tfplan.bin -auto-approve
+        run: terraform apply tfplan.bin
 
       - name: Terraform Destroy on Failure
         if: steps.apply-step.outcome == 'failure'
         working-directory: src/entry
         run: |
           echo "Terraform apply failed. Starting destroy to clean up."
-          terraform destroy -auto-approve
+          terraform destroy tfplan.bin
       
       - name: Fail the Pipeline
         if: steps.apply-step.outcome == 'failure'
