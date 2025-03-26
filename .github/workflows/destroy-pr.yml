@@ -21,7 +21,7 @@ jobs:
       TF_VAR_environment: "development"
       TF_VAR_region: "eu-central-1"
       TF_VAR_aws_account_id: 746669194690
-      TF_VAR_pr_number: ${{ github.event.number }}
+      TF_VAR_pr_number: ${{ inputs.pr_number || github.event.number }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
           terraform init \
             -backend-config="region=eu-central-1" \
             -backend-config="bucket=terraform-state-terminapp-dev" \
-            -backend-config="key=pr-${{ github.event.number }}/state.tfstate" \
+            -backend-config="key=pr-${{ inputs.pr_number || github.event.number }}/state.tfstate" \
             -backend-config="use_lockfile=true"
 
       - name: Terraform Destroy
