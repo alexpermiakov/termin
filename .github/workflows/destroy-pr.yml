@@ -1,6 +1,12 @@
 name: Destroy PR
 
 on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to destroy resources for'
+        required: true
+        type: number
   pull_request:
     types: [closed]
 
