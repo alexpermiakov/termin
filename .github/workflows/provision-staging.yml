@@ -1,0 +1,17 @@
+name: Provision Staging
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  provision:
+    name: Provision Staging
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Echo Staging 
+        run: echo "Staging deploy is not yet implemented."
