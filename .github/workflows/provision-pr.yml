@@ -53,7 +53,7 @@ jobs:
       - name: Terraform Init and Plan Development
         working-directory: src/entry
         env:
-          TR_VAR_pr_number: ${{ github.event.number }}
+          TR_VAR_pr_number: 1
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
