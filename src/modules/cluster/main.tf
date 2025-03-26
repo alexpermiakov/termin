@@ -9,7 +9,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "termin-eks"
+  cluster_name = "termin-eks-pr-${pr_number}"
   zones_count  = length(data.aws_availability_zones.available.names)
 }
 

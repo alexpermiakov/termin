@@ -15,5 +15,5 @@ variable "aws_account_id" {
 
 variable "pr_number" {
   description = "The pull request number"
-  type        = string
+  type        = number
 }
