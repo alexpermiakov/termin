@@ -9,7 +9,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "termin-eks-pr-${pr_number}"
+  cluster_name = "termin-eks-pr-${var.pr_number}"
   zones_count  = length(data.aws_availability_zones.available.names)
 }
 
@@ -17,7 +17,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.19.0"
 
-  name = "k8s-vpc-pr-${pr_number}"
+  name = "k8s-vpc-pr-${var.pr_number}"
 
   cidr = "10.0.0.0/20"
   azs  = slice(data.aws_availability_zones.available.names, 0, min(3, local.zones_count))
