@@ -17,6 +17,7 @@ jobs:
       TF_VAR_environment: "development"
       TF_VAR_region: eu-central-1
       TF_VAR_aws_account_id: 746669194690
+      TR_VAR_pr_number: ${{ github.event.number }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,9 +38,9 @@ jobs:
 
       - name: Delete KMS Alias (if exists)
         run: |
-          if aws kms describe-alias --alias-name alias/eks/termin-eks-development > /dev/null 2>&1; then
+          if aws kms describe-alias --alias-name alias/eks/termin-eks-pr-${{ github.event.number }} > /dev/null 2>&1; then
             echo "Deleting existing KMS alias..."
-            aws kms delete-alias --alias-name alias/eks/termin-eks-development
+            aws kms delete-alias --alias-name alias/eks/termin-eks-pr-${{ github.event.number }}
           else
             echo "KMS alias does not exist. Skipping deletion."
           fi
@@ -75,7 +76,7 @@ jobs:
         working-directory: src/entry
         run: |
           echo "Terraform apply failed. Starting destroy to clean up."
-          terraform destroy tfplan.bin
+          terraform destroy -auto-approve
       
       - name: Fail the Pipeline
         if: steps.apply-step.outcome == 'failure'

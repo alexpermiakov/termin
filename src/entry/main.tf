@@ -18,6 +18,7 @@ module "cluster" {
   environment    = var.environment
   region         = var.region
   aws_account_id = var.aws_account_id
+  pr_number      = var.pr_number
 }
 
 # module "notification" {
