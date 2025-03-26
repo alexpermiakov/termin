@@ -1,11 +1,13 @@
-name: Destroy Terraform Development
+name: Terraform PR Cleanup
 
 on:
   workflow_dispatch:
+  pull_request:
+    types: [closed]
 
 jobs:
-  terraform-destroy-dev:
-    name: Destroy Terraform Development
+  cleanup:
+    name: Destroy PR Infrastructure
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -32,17 +34,14 @@ jobs:
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
 
-      - name: Set Unique State Key for PR
-        id: set-key
-        run: echo "TF_STATE_KEY=development/state-pr-${{ github.event.pull_request.number }}.tfstate" >> $GITHUB_ENV
-
       - name: Terraform Init (Prepare for Destroy)
         working-directory: src/entry
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
             -backend-config="bucket=terraform-state-terminapp-dev" \
-            -backend-config="key=${TF_STATE_KEY}"
+            -backend-config="key=pr-${{ github.event.number }}/state.tfstate" \
+            -backend-config="use_lockfile=true"
 
       - name: Terraform Destroy
         working-directory: src/entry
