@@ -11,7 +11,7 @@ on:
   pull_request:
 
 jobs:
-  terraform-environments-development:
+  environments-development:
     name: Terraform Development
     runs-on: ubuntu-latest
     permissions:
@@ -89,7 +89,7 @@ jobs:
           echo "Terraform apply failed. Cleanup complete. Marking job as failed."
           exit 1
   
-  terraform-environments-staging:
+  environments-staging:
     name: Terraform Staging
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
@@ -98,7 +98,7 @@ jobs:
       - name: Echo Staging 
         run: echo "Staging deploy is not yet implemented."
     
-  terraform-environments-production:
+  environments-production:
     name: Terraform Production
     runs-on: ubuntu-latest
     permissions:
