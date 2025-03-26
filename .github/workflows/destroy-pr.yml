@@ -1,22 +1,24 @@
-name: Destroy Terraform Production
+name: Destroy PR
 
 on:
   workflow_dispatch:
+  pull_request:
+    types: [closed]
 
 jobs:
-  terraform-destroy-production:
-    name: Destroy Terraform Production
+  destroy:
+    name: Destroy PR
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     env:
-      TF_VAR_environment: "production"
+      TF_VAR_environment: "development"
       TF_VAR_region: "eu-central-1"
-      TF_VAR_aws_account_id: 585008076441
+      TF_VAR_aws_account_id: 746669194690
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -28,7 +30,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4.1.0
         id: oidc
         with:
-          role-to-assume: arn:aws:iam::585008076441:role/TerraformExecutionRole
+          role-to-assume: arn:aws:iam::746669194690:role/TerraformExecutionRole
           aws-region: eu-central-1
           audience: sts.amazonaws.com 
 
@@ -37,9 +39,8 @@ jobs:
         run: |
           terraform init \
             -backend-config="region=eu-central-1" \
-            -backend-config="bucket=terraform-state-terminapp-prod" \
-            -backend-config="key=state.tfstate" \
-            -backend-config="encrypt=true" \
+            -backend-config="bucket=terraform-state-terminapp-dev" \
+            -backend-config="key=pr-${{ github.event.number }}/state.tfstate" \
             -backend-config="use_lockfile=true"
 
       - name: Terraform Destroy
