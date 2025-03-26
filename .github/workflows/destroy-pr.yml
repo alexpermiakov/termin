@@ -1,7 +1,6 @@
 name: Destroy PR
 
 on:
-  workflow_dispatch:
   pull_request:
     types: [closed]
 
